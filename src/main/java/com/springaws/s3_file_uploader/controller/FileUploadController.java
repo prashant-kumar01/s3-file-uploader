@@ -30,7 +30,7 @@ public class FileUploadController {
                                    RedirectAttributes redirectAttributes) {
         try {
             if (file.isEmpty()) {
-                redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+                redirectAttributes.addFlashAttribute("message", "Please select a proper file to upload");
                 return "redirect:/";
             }
             
