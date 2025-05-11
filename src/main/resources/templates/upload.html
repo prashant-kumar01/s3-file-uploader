@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>S3 File Uploader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .preview-container {
+            margin-top: 20px;
+        }
+
+        img.preview {
+            max-width: 100%;
+            max-height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Photo Upload to S3</h1>
+
+    <div th:if="${message}" class="message" th:classappend="${fileUrl} ? success : error">
+        <p th:text="${message}"></p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" action="/upload">
+        <div class="form-group">
+            <label for="file">Select a photo to upload:</label>
+            <input type="file" name="file" id="file" accept="image/*">
+        </div>
+        <button type="submit" class="button">Upload</button>
+    </form>
+
+    <div class="preview-container" th:if="${fileUrl}">
+        <h3>Uploaded Image:</h3>
+        <img class="preview" th:src="${fileUrl}" alt="Uploaded Image">
+        <p>Image URL: <a th:href="${fileUrl}" target="_blank" th:text="${fileUrl}"></a></p>
+    </div>
+
+    <script>
+        // Client-side image preview before upload
+        document.getElementById('file').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Create preview container if it doesn't exist
+                    let container = document.querySelector('.preview-container');
+                    if (!container) {
+                        container = document.createElement('div');
+                        container.className = 'preview-container';
+                        container.innerHTML = '<h3>Image Preview:</h3>';
+                        document.body.appendChild(container);
+                    } else {
+                        container.innerHTML = '<h3>Image Preview:</h3>';
+                    }
+
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview';
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+
+</html>
